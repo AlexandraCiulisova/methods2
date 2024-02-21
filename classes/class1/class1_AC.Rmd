@@ -83,10 +83,50 @@ These first exercises are about learning what simulating data is for.
 Data is artifically and randomly created, does not reflect reality.
 
 ## Ex. 0.b): Specify some amount of data points (n), some mean and some sd, and use rnorm() to simulate this amount of data points based off of the mean and sd you've set. 
+
+```{r}
+set.seed(200)
+
+data <- rnorm(20, 10, 1)
+data_fr <- as.data.frame(data)
+
+plot(data)
+
+```
+
+```{r}
+x <- seq(-5, 5)
+sigma <- 1
+mu <- 0
+tau <- 
+
+f1 <- function(x, mu, sigma) {
+  (1 / (sigma * sqrt(2 * pi))) * exp(-0.5 * ((x - mu) / sigma)^2)
+}
+
+# Call the function for the given sequence of x values
+result <- f1(x, mu, sigma)
+plot(result)
+
+f1 <- function(x, mu, sigma) {
+  (1 / (sigma * sqrt(2 * pi))) * exp(-0.5 * ((x - mu) / sigma)^2)
+}
+
+
+```
+
+
+
 ```{r}
 set.seed(1998) # setting a seed (in the best year ever??) - this way, even though it's random, you'll get reproducible results next time you run this with this seed
 
-stimulated_data <- rnorm(500, 50, 4)
+stimulated_data <- rnorm(100, 7, 0.7)
+df_stimulated_data <- as.data.frame(stimulated_data)
+df_stimulated_data %>%
+  filter(stimulated_data > 8.4) %>%
+  summarise(n())
+
+hist(stimulated_data)
 
 # rnorm() works like: my_simulated_data <- rnorm(n, mean, sd) - now you go!
 
