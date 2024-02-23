@@ -11,9 +11,41 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 
 # Setting my root directory to where I have my /data folder etc. (easier for me, but personalise to your own way of working)
-knitr::opts_knit$set(root.dir = "/Users/pernillebrams/Desktop/AARHUS_UNIVERSITY/instructor_2024/methods-2")
+knitr::opts_knit$set(root.dir = "~/Documents/GitHub/methods2/classes/data")
 
 ```
+
+
+```{r}
+mu <- 0.0
+sigma <- 1.0
+tau <- 1.0
+
+f1 <- function(x){
+  (1/(sigma*sqrt(2*pi))) * exp((-1/2* ((x - mu) / sigma))^2)
+}
+
+f2 <- function(x){
+  (sqrt(tau / (2*pi))*exp((-tau*(x-mu)^2)/2))
+}
+
+x_values <- seq(-5,5, by = 0.1)
+
+y_f1 <- f1(x_values)
+
+y_f2 <- f2(x_values)
+
+df1 <- data.frame(
+  x = x_values,
+  y1 = y_f1,
+  y2 = y_f2
+)
+
+plot1 <- ggplot(df,
+                aes(x) +
+                  )
+```
+
 
 ```{r libs}
 library(pacman)
@@ -43,6 +75,10 @@ for (i in 1:10){ # For each i in 1:10...
 }
 
 # your simple loop here
+
+for (i in 5:20){
+  print(i*2)
+}
 ```
 
 I've also made an example of a while loop below. Make your own example below it. If you have no ideas for what to code in your while loop, here's an example you can try to code up:
@@ -56,6 +92,11 @@ while (number < 10){ # While the number is below 10, do the following
 }
 
 # your simple while-loop here
+n = 0
+while(n < 4){
+  print(n)
+  n = n + 2
+}
 ```
 
 ## Exercises to practise functions and if-else statements
@@ -64,9 +105,13 @@ Create a function that accepts a temperature in Fahrenheit and returns the tempe
 ```{r}
 # Function to convert Fahrenheit to Celsius
 convert_to_celsius <- function(fahrenheit) {
+  celsius = (fahrenheit - 32) * 5 / 9
+  return(celsius)
   # Your code here
   # Hint: Apply the conversion formula within the function
 }
+
+convert_to_celsius(68)
 
 # Example of how the final function (when you've written it) should be used:
 # temp_celsius <- convert_to_celsius(68)
@@ -87,9 +132,14 @@ Use statements if, else if, and else. Google how to set up the syntax with curly
 ```{r}
 # Function to give clothing advice based on temperature
 clothing_advice <- function(temperature) {
-  # Your code here
-  # Hint: Use if-else statements to check the temperature and return the advice
+  clothing <- ifelse(temperature > 25, "T-shirt", 
+                     ifelse(temperature > 15, "light jacket", "warm coat"))
+  return(paste("For temperature =", temperature, "wear a", clothing))
 }
+
+temperature <- 20
+clothing_advice(temperature)
+
 
 # Example of how the final function (when you've written it) should be used:
 # advice <- clothing_advice(20)
@@ -101,6 +151,57 @@ clothing_advice <- function(temperature) {
 ## Exercises from the book
 
 ## Ex. 0: Write up / copy the code found on page 69-70 in chapter 5 ROS and note whats going on at each step. The book explains it - so just go through it and discuss with your group to understand whats going on.
+```{r}
+?rbinom
+#num of samples, from how many total, probability of our wanted observation
+n_girls <- rbinom(1, 400, 0.488)
+   print(n_girls)
+   
+n_sims <- 1000
+n_girls <- rep(NA, n_sims)
+for (s in 1:n_sims){
+     n_girls[s] <- rbinom(1, 400, 0.488)
+   }
+hist(n_girls)
+
+-----
+
+birth_type <- sample(c("fraternal twin","identical twin","single birth"),
+     size=400, replace=TRUE, prob=c(1/125, 1/300, 1 - 1/125 - 1/300))
+   girls <- rep(NA, 400)
+   for (i in 1:400){
+     if (birth_type[i]=="single birth") {
+       girls[i] <- rbinom(1, 1, 0.488)
+     } else if (birth_type[i]=="identical twin") {
+       girls[i] <- 2*rbinom(1, 1, 0.495)
+     } else if (birth_type[i]=="fraternal twin") {
+       girls[i] <- rbinom(1, 2, 0.495)
+} }
+   
+n_girls <- sum(girls)
+
+----
+  
+n_sims <- 1000
+   n_girls <- rep(NA, n_sims)
+   for (s in 1:n_sims){
+     birth_type <- sample(c("fraternal twin","identical twin","single birth"),
+       size=400, replace=TRUE, prob=c(1/125, 1/300, 1 - 1/125 - 1/300))
+     girls <- rep(NA, 400)
+     for (i in 1:400) {
+       if (birth_type[i]=="single birth") {
+         girls[i] <- rbinom(1, 1, 0.488)
+       } else if (birth_type[i]=="identical twin") {
+         girls[i] <- 2*rbinom(1, 1, 0.495)
+       } else if (birth_type[i]=="fraternal twin") {
+         girls[i] <- rbinom(1, 2, 0.495)} 
+       }
+     n_girls[s] <- sum(girls)
+   }
+
+
+```
+
 
 ### Ex. 5.1 Discrete probability simulation: Suppose that a basketball player has a 60% chance of making a shot, and he keeps taking shots until he misses two in a row. Also assume his shots are independent (so that each shot has 60% probability of success, no matter what happened before).
 * Hint 3 and 4
@@ -146,6 +247,16 @@ basketball <- function(){ # starting the function for you
 #### Ex. 5.3.a) Write a line of R code to compute the probability that the player makes exactly 3 of the 10 shots.
 ```{r}
 # your code here
+player <- rbinom(1000, 10, 0.4)
+count <- 0
+for (i in player){
+  if(i == 3){
+    count=count +1
+  }
+}
+  
+probability <- count / 1000
+
 ```
 
 #### Ex. 5.3.b) Write an R function to simulate the 10 shots. Loop this function 10 000 times and check that your simulated probability of making exactly 3 shots is close to the exact probability computed in (a).
