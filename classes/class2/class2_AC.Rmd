@@ -223,24 +223,68 @@ We need to record:
 Let's try and write a function:
 ```{r}
 # Function to simulate basketball player
-basketball <- function(){ # starting the function for you
+basketball <- function() {
+  hits <-  0
+  miss <- 0
+  shots <- 0
   
-  # your code here
+  while (miss < 2) {
+    basketballs <- rbinom(n = 1, size = 1, prob = 0.6)
+    if (basketballs == 1 & miss != 1) {
+      hits <- hits + 1
+    }
+    if (basketballs == 0) {
+      miss <- miss + 1
+    }
+    shots <- shots + 1
+  }
   
+  return(list(shots = shots, miss = miss, hits = hits))
 }
-# Example usage of the function, when done
-# basket_sim <- basketball(printing = TRUE)
+
+# Example usage of the function
+basket_sim <- basketball()
+print(basket_sim)
 
 ```
 
 #### Ex. 5.1.b) Put the R function in a loop to simulate the process 1000 times. Use the simulation to estimate the mean and standard deviation of the total number of shots that the player will take, and plot a histogram representing the distribution of this random variable. 
 ```{r}
-# your code here
+# Initialize an empty vector to store the number of shots taken in each iteration
+shots_taken <- numeric(1000)
+shots_hits <- numeric(1000)
+
+# Run the basketball simulation 1000 times
+for (i in 1:1000) {
+  result <- basketball()
+  shots_taken[i] <- result$shots
+  shots_hits[i] <- result$hits
+}
+
+# Calculate the mean and standard deviation of the number of shots taken
+mean_shots <- mean(shots_taken)
+sd_shots <- sd(shots_taken)
+
+mean_shots
+sd_shots
+
+hist(shots_taken)
+
 ```
 
 #### Ex. 5.1.c) Using your simulations, make a scatterplot of the number of shots the player will take and the proportion of shots that are successes.
 ```{r}
 # your code here
+basketball_df <- data.frame(
+  shots = shots_taken,
+  proportion = shots_hits / shots_taken
+)
+
+ggplot(data = basketball_df, aes(x = shots, y = proportion))+
+  geom_point()+
+  labs(x = "Number of Shots", y = "Proportion of Hits") +
+  theme_minimal()
+
 ```
 
 ### Ex. 5.3: Binomial distribution: A player takes 10 basketball shots, with a 40% probability of making each shot. Assume the outcomes of the shots are independent.
@@ -256,19 +300,57 @@ for (i in player){
 }
   
 probability <- count / 1000
-
+probability
 ```
 
 #### Ex. 5.3.b) Write an R function to simulate the 10 shots. Loop this function 10 000 times and check that your simulated probability of making exactly 3 shots is close to the exact probability computed in (a).
 ```{r}
 # your code here
+basketball_10shots <- function(){
+  player <- rbinom(1, 10, 0.4)  # Simulate the number of shots made by the player in one game
+  if(player == 3){  # Check if the player made exactly 3 shots
+    return(1)  # Return 1 if the condition is met
+  } else {
+    return(0)  # Return 0 otherwise
+  }
+}
+
+# Initialize a variable to store the number of times exactly 3 shots are made out of 10, 
+# initialized as 0
+count <- 0
+
+# Loop the function 10,000 times
+for (i in 1:10000){
+  count <- count + basketball_10shots()
+}
+
+# Calculate the simulated probability
+simulated_probability <- count / 10000
+
+simulated_probability
+
 ```
+
 
 ## Ex. 5.4: Demonstration of the Central Limit Theorem: Let x = x1 + · · · + x20, the sum of 20 independent uniform(0, 1) random variables. In R, create 1000 simulations of x and plot their histogram. What is the normal approximation to this distribution provided by the Central Limit Theorem? Overlay a graph of the normal density on top of the histogram. Comment on any differences between the histogram and the curve.
 
 (Recall the Central limit theorem (CLT) on the bottom of page 51 and from Methods 1)
 ```{r}
 # your code here
+variables <- numeric(1000)
+for (i in 1:1000){
+  variables[i] <- sum(rbinom(20, 1, 0.5))
+}
+
+
+hist(variables, breaks = 30, probability = TRUE, 
+     main = "Histogram of 1000 Simulations")
+
+# Overlay normal density curve
+mu <- 20 * 0.5  # mean of the sum of 20 uniform(0,1) variables
+sigma <- sqrt(20 * (1/12))  # standard deviation of the sum
+curve(dnorm(x, mean = mu, sd = sigma), add = TRUE, col = "red")
+
 ```
 
 ## Ex. 5.5: Distribution of averages and differences: The heights of men in the United States are approximately normally distributed with mean 69.1 inches and standard deviation 2.9 inches. The heights of women are approximately normally distributed with mean 63.7 inches and standard deviation 2.7 inches. Let x be the average height of 100 randomly sampled men, and y be the average height of 100 randomly sampled women. In R, create 1000 simulations of x − y and plot their histogram. Using the simulations, compute the mean and standard deviation of the distribution of x − y and compare to their exact values.
@@ -276,6 +358,26 @@ probability <- count / 1000
 
 ```{r}
 # your code here
+difference <- numeric(1000)
+
+for (i in 1:1000){
+  men <- mean(rnorm(100, 69.1, 2.9))
+  women <- mean(rnorm(100, 63.7, 2.7))
+  difference[i] <- men - women
+}
+
+hist(difference)
+mean_sim <- mean(difference)
+sd_sim <- sd(difference)
+
+mean_sim
+sd_sim
+
+mean_exact <- 69.1 - 63.7
+sd_exact <- sqrt((2.9^2/100) + (2.7^2/100))
+
+mean_exact
+sd_sim
 ```
 
 ## Ex. 5.8: Coverage of confidence intervals: On page 15 there is a discussion of an experimental study of an education-related intervention in Jamaica, in which the point estimate of the treatment effect, on the log scale, was 0.35 with a standard error of 0.17. Suppose the true effect is 0.10 — this seems more realistic than the point estimate of 0.35 — so that the treatment on average would increase earnings by 0.10 on the log scale. Use simulation to study the statistical properties of this experiment, assuming the standard error is 0.17.
@@ -283,22 +385,67 @@ probability <- count / 1000
 
 ```{r}
 # your code here
+point_est <- 0.35
+sd_est <- 0.17
+true_eff <- 0.10
+
+simulated_effects <- rnorm(1000, true_eff, sd_est)
+
+result <- t.test(simulated_effects)
+confidence_interval <- result$conf.int
+confidence_interval #the mean’s computed confidence interval is 0.09603985 0.10259530
+mean(simulated_effects)
+sd(simulated_effects)
 ```
 
 #### Ex. 5.8.a) Simulate 1000 independent replications of the experiment assuming that the point estimate is normally distributed with mean 0.10 and standard deviation 0.17.
 (In the experiment on page 15, we see n = 127 children)
 ```{r}
 # your code here
+replications <- numeric(10000)
+for (i in 1:1000){
+  replications[i] <- mean(rnorm(127, 0.10, 0.17))
+}
+
+mean(replications)
+sd(replications)
 ```
 
 #### Ex. 5.8.b) For each replication, compute the 95% confidence interval. Check how many of these intervals include the true parameter value.
 ```{r}
 # your code here
+replications <- numeric(10000)
+count <- 0
+for (i in 1:1000){
+  values <- rnorm(127, 0.10, 0.17)
+  replications[i] <- mean(values)
+  result <- t.test(values)
+  conf <- result$conf.int
+  if (conf[1]<= replications[i] & replications[i] <= conf[2]){
+    count = count + 1
+  }
+}
+
+count
 ```
 
 #### Ex. 5.9: Coverage of confidence intervals after selection on statistical significance: Take your 1000 simulations from Exercise 5.8, and select just the ones where the estimate is statistically significantly different from zero. Compute the average and standard deviation of the selected point estimates. Compare these to the result from Exercise 5.8.
 ```{r}
 # your code here
+replications <- numeric(10000)
+significant <- list()
+for (i in 1:1000){
+  values <- rnorm(127, 0.10, 0.17)
+  result <- t.test(values)
+  if (result$p.value < 0.05){
+    significant[[length(significant) + 1]] <- mean(values)
+  }
+}
+
+significant <- unlist(significant)
+
+mean(significant)
+sd(significant)
 ```
 
 # Hints
