@@ -471,6 +471,7 @@ A prime number is a natural number greater than 1 that has no positive divisors 
 ```{r}
 # Function to check if a number is prime
 is_prime <- function(number) {
+  while ()
   # Your code here
   # Hint: You may use a while-loop or a for-loop to test divisibility
   # Remember to handle edge cases like numbers less than 2
