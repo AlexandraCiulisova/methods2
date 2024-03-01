@@ -11,7 +11,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 
 # Setting my root directory to where I have my /data folder etc. (easier for me, but personalise to your own way of working)
-knitr::opts_knit$set(root.dir = "/Users/pernillebrams/Desktop/AARHUS_UNIVERSITY/instructor_2024/methods-2")
+knitr::opts_knit$set(root.dir = "~/Documents/GitHub/methods2/classes/class3")
 
 ```
 
@@ -37,7 +37,12 @@ Result to check: You should get 5050.
 
 Hint A1* under Hints
 ```{r}
+my_sum <- 0
+for (number in 1:100){
+  my_sum <- my_sum + number
+} 
 
+my_sum
 ```
 
 ### A2 Using a for-loop, create a vector of the squares of the first 20 positive integers, starting from 1. Calculate the sum of the vector.
@@ -45,7 +50,12 @@ Result to check: You should get 2870.
 
 Hint A2* under Hints
 ```{r}
+squares <- c()
+for (number in 1:20){
+  squares <- append(squares, number^2)
+}
 
+sum(squares)
 ```
 
 ## B. Need some more practice in while loops? 
@@ -55,14 +65,32 @@ Result to check: You should get 45 here
 Hint B1* under Hints
 
 ```{r}
+n <- 1
+sum_track <- 0
+while (sum_track <= 1000){
+  sum_track <-  sum_track + n
+  n <-  n + 1
+}
 
+n
 ```
+## Hints for B
+Hint B1: Start by defining a sum-tracker object, which will be used in the loop to check if it is below/equal to 1000 - because while (!) that is true, we want to add the next number to the sum-tracker. The while loop will stop when the condition youve set ISNT true anymore, and then, you should print the n it got to (so you also need to, before your while loop starts, define an n, which is the positive integer-holder).
 
 ### B2 Create a countdown from 10 to 1 and then print "Lift off!".
 
 Hint B2* under Hints
 
 ```{r}
+i <- 10
+while(i >= 0) {
+  if (i > 0) {
+    print(i)
+  } else {
+    print("Lift off!")
+  }
+  i <- i - 1
+}
 
 ```
 
@@ -75,7 +103,15 @@ Hint B2* under Hints
 0
 
 ```{r}
+number <- 0
 
+if (number > 0){
+  print(paste("Number", number, "is positive"))
+} else if (number < 0 ){
+  print(paste("Number", number, "is negative"))
+} else {
+  print(paste("Number", number, "is zero"))
+}
 ```
 
 Tip for C1: do it one by one first, and if you need more practice, do a for-loop and check them that way.
@@ -90,6 +126,19 @@ Ages:
 :) :) 26 <3 <3 
 
 ```{r}
+ages <- c(10, 18, 56, 19, 89, 26)
+
+for (age in ages){
+  if (age < 12){
+    print("a child")
+  } else if(12 <= age & age <= 18){
+    print("teenager")
+  } else if(19 <= age & age <= 65){
+    print("adult")
+  } else {
+    print("senior")
+  }
+}
 
 ```
 
@@ -97,57 +146,155 @@ Ages:
 ### D1 Create a function that takes a vector of numbers and returns the mean of that vector.
 (If you need to, check class 2's doc for how to write functions)
 ```{r}
+vector <- c(2, 3, 4)
+mean_calculate <- function(list){
+  mean_list <- sum(list)/length(list)
+  return(mean_list)
+}
 
+mean_calculate(vector)
 ```
 
 ### D2 Write a function named calculate_area_circle that takes the radius of a circle as its argument and returns the area of the circle. Remember, the formula to calculate the area of a circle is pi*r^2, where r is the radius of the circle.
 
 ```{r}
+calculate_area_circle <- function(radius){
+  area <- pi*radius^2
+  return(area)
+}
 
+calculate_area_circle(4)
 ```
 
 ## E. Need some more practice in simulations? 
 ### E1 Write a simulation to mimic the rolling of two six-sided dice. Simulate rolling the two dice 10000 times and store the sum of the dice faces for each roll. Plot a histogram of the sums to see the distribution of the total dice rolls. Calculate and print the mean and standard deviation of the rolls.
 ```{r}
+n <- 10000
+dice <- c(1, 2, 3, 4, 5, 6)
+sum_dice <- rep(NA, n)
+
+dice_rolling <- function() {
+  die_1 <- sample(dice, 1, replace = TRUE)
+  die_2 <- sample(dice, 1, replace = TRUE)
+  return(die_1 + die_2)
+}
+
+sum_dice <- replicate(n, dice_rolling())
+hist(sum_dice)
+mean(sum_dice)
+sd(sum_dice)
 
 ```
 
 ### E2 Consider a population that grows exponentially according to the formula \(P = P_0e^{rt}\) (the e^{rt} part is written exp(r*t) in r), where \(P_0\) is the initial population size, \(r\) is the rate of growth, and \(t\) is time in years. Simulate the growth of a population starting with 100 individuals and a growth rate of 2% per year over 50 years. Plot the population size each year.
 
 ```{r}
+P_0 <- 100
+r <- 0.02
+t <- 50
+people <- c()
+
+growth <- function(){
+  for (i in 1:t){
+    P <- P_0 * exp(r * i)
+    people <- append(people, P)
+  }
+  return(people)
+}
+
+population <- growth()
+hist(population)
 
 ```
 ### E3 Simulate the annual returns of an investment portfolio with an average return of 7% and a standard deviation of 10%. Assume the returns follow a normal distribution. Simulate 30 years of returns and calculate the final portfolio value assuming an initial investment of $10,000. Repeat this simulation 1000 times and plot a histogram of the final portfolio values. Calculate the mean and standard deviation of the final values.
 
 ```{r}
+return_avg <- 0.07
+sd <- 0.1
+years <- 30
+investment <- 10000
+n <- 1000
+final_values <- rep(NA, n)
+
+portfolio <- function(){
+  for (i in 1:years){
+  percentage <- rnorm(1, return_avg, sd)
+  investment <- investment * (1 + percentage)
+} 
+  return(investment)
+}
+
+values <- replicate(n, portfolio())
+hist(values)
+mean(values)
+sd(values)
 
 ```
 
 #### E4 (Ex. 3.5 from the book) Probability distributions: Using a bar plot in R, graph the binomial distribution with n = 20 and p = 0.3.
 
 ```{r}
-
+n <- 20
+p <- 0.3
+distribution <- rbinom(n, 1 ,p)
+barplot(distribution)
 ```
 
 ### E5 Sampling from a discrete distribution - rolling a loaded die
 A loaded (or biased) die is one where the probabilities of landing on each number are not equal. Simulate rolling a loaded die 10,000 times, where the probabilities of rolling each number from 1 to 6 are given as follows: P(1) = 0.05, P(2) = 0.10, P(3) = 0.35, P(4) = 0.25, P(5) = 0.15, P(6) = 0.10. Plot a histogram of the outcomes and calculate the mean and standard deviation of the results.
 
 ```{r}
+n <- 100000
+numbers <- c(1,2,3,4,5,6)
+probabilities <- c(0.05, 0.10, 0.35, 0.25, 0.15, 0.10)
 
+loaded_die <- function(){
+  sample(numbers, 1, replace = TRUE, prob = probabilities)
+}
+
+outcome <- replicate(n, loaded_die())
+hist(outcome)
+mean(outcome)
+sd(outcome)
 ```
 
 ### E6 Sampling from a continuous distribution - generating heights
 Assume that the heights of individuals in a population are normally distributed with a mean of 170 cm and a standard deviation of 10 cm. Generate a sample of 1,000 individual heights from this distribution. Plot a histogram of the generated heights and calculate the mean and standard deviation of the sample.
 
 ```{r}
+mean <- 170
+sd <- 10
+n <- 1000
 
+heights <- rnorm(n, mean, sd)
+hist(heights)
+mean(heights)
+sd(heights)
 ```
 
 ### E7 Simulating coin flips - Bernoulli Distribution
 (this is something we work with on the master's hehe)
 Simulate flipping a fair coin 5,000 times, where the outcome of each flip is either "Heads" or "Tails" with equal probability. Calculate and print the proportion of flips that result in Heads. This exercise demonstrates sampling from a Bernoulli distribution, which is a simple case of a discrete distribution.
 ```{r}
+n <- 5000
+prob <- 0.5
+size <- 1
 
+outcome_flip <- data.frame(flips = rbinom(n, size, prob))
+outcome_flip <- outcome_flip %>%
+  mutate(flips = recode(flips, "0" = "heads", "1" = "tails"))
+
+outcome_flip %>%
+  group_by(flips) %>%
+  summarise(n())
+
+outcome_flip_bern <- data.frame(flips = rbernoulli(n, p = 0.5))
+outcome_flip_bern %>%
+  group_by(flips) %>%
+  summarise(n())
+
+proportion <- 2464 / 2536
+proportion
 ```
 
 # A few more exercises from the book
@@ -157,14 +304,24 @@ A note: The task is to draw/plot some probability distributions for the normal d
 
 The point of this task is thus for you to see what happens when you vary the mean/standard deviation and nothing else in a distribution.
 ```{r}
-
+n <- 100
+normal <- hist(rnorm(n, 0, 1))
+hist(rnorm(n, 1, 1))
+hist(rnorm(n, 1, 2))
 ```
 
 #### Ex. 3.4 Probability distributions: Using a bar plot in R, graph the Poisson distribution with parameter 3.5.
 (Remember when the book says 'graph' it means simulate some data as per instructions and make a plot)
 
 ```{r}
+lambda <- 3.5
+x <- seq(0, 20, by = 0.1)
+points <- data.frame(prob = dpois(x, lambda), x = x)
 
+points %>%
+  ggplot(aes(x = x, y = prob)) +
+  geom_bar(stat = "identity") +
+  labs(x = "x", y = "Probability", title = "Poisson Distribution with λ = 3.5")
 ```
 
 # Hints for exercises A-E
