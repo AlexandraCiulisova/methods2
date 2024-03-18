@@ -39,15 +39,69 @@ In the GILL book (in this order):
 1.4
 The rest from the lecture's last slide.
 
+```{r}
+f <- function(x) {
+  return(5*x/9 - 160/9)
+}
+
+# Generate x values
+x <- seq(-100, 100, by = 1)
+
+# Calculate y values
+y <- f(x)
+
+# Plot
+plot(x, y, type = "l", xlab = "x", ylab = "y", main = "Plot of y = 5x/9 - 160/9")
+
+```
+
+
 # Extra about Bayesian, if you finish early (extra = optional!)
 ## Ex. 1: Load rstanarm()
+```{r}
+pacman::p_load(rstanarm)
+```
+
 
 ## Ex. 2: Simulate data for a simple linear regression model, y = b0 + b1*X+e, where x is a predictor variable, y is the outcome, and e is the normally distributed error.
+```{r}
+b0 <- 3
+b1 <- 5
+x <- seq(-25, 25, by = 0.1)
+e <- rnorm(501, 0, 20)
+
+y_plot <- b0 + b1*x + e
+plot(y_plot)
+
+data <- data.frame(
+  x = x,
+  y = y_plot
+)
+```
+
 
 ## Ex. 3: Fit a Bayesian linear regression model using stan_glm from the rstanarm package with default priors.
+```{r}
+model <- stan_glm(y ~ x, data = data)
+print(summary(model))
+```
+
 
 ## Ex. 4: Explain in a few sentences what a prior is (this is difficult stuff, so light level here is totally fine)
+The knowledge one has in advance to running the test on that particular set of data formulated as a distribution.
+
 
 ## Ex. 5: Refit model using different priors for b0 and b1.
+```{r}
+model2 <- stan_glm(y ~ x, data = data,
+                   family = gaussian(),
+                   prior = (normal(location = 10, scale = 3.1, autoscale = FALSE)),
+                   prior_intercept = default_prior_intercept(family))
+
+print(summary(model))
+print(summary(model2))
+
+```
+
 
 
