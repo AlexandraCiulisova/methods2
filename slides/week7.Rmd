@@ -44,16 +44,20 @@ TODO: create a cost function that returns the sum of squared errors.
 
 ```{r}
 cost_function <- function(alpha, beta, x, y){
-  ss <- 
+  y_predicted <- alpha + beta * x
+  y_difference <- (y - y_predicted)^2
+  ss <- sum(y_difference)
   return(ss)
 }
+
+cost_function(alpha, beta, x, y)
 ```
 
 
 TODO: Compute the SSE of the model by inspecting the ols_fit variable looking at the residuals.
 
 ```{r}
-
+sum(resid(ols_fit)^2)
 ```
 
 Compute the MSE of the model by using the cost function we have created above.
@@ -93,7 +97,12 @@ Create a function gradient_desc that compute the gradient of the model depending
 
 ```{r}
 gradient_desc <- function(alpha, beta, x, y){
-  grad_beta <- 
+  grad_beta <- (cost_function(alpha, beta, x, y) - cost_function(alpha, beta - 0.000000001, x, y))/0.000000001
+  return (grad_beta)
+}
+
+gradient_desc <- function(alpha, beta, x, y){
+  grad_beta <- (2*sum(alpha + beta*x - y))/500
   return (grad_beta)
 }
 ```
@@ -102,7 +111,7 @@ gradient_desc <- function(alpha, beta, x, y){
 ```{r}
 gradient_desc(
   alpha = 18,
-  beta = 0.0,
+  beta = 2,
   x = data$x, 
   y = data$y
 )
@@ -113,9 +122,10 @@ TODO: create a gradient descent step.
 delta <- 0.001
 
 minimize_function <- function(alpha, beta, x, y, delta){
-  new_beta <- 
+  new_beta <- beta - delta*gradient_desc(alpha, beta, x, y)
   return(new_beta)
 }
+
 ```
 
 
