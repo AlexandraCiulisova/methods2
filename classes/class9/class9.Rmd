@@ -103,7 +103,7 @@ x <- seq(-2,2,by=.15)
 y <- seq(-1,3,by=.15) 
 z <- outer(x,y,f) #All possible combination of x,y is used to calculate all possible f(x,y) = z. 
 #how to plot 3D
-persp(x,y,z,phi=45,theta=-45,col="green",shade=.00000001,ticktype="detailed")
+persp(x,y,z,phi=45,theta=-45,col="pink",shade=.00000001,ticktype="detailed")
 ```
 
 When then using the optim() function for multidimensional optimization then the input has to be a multidimensional vector
